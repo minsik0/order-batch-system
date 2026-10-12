@@ -1,0 +1,34 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  # 한정판 커머스 DB 모킹 (읽기 전용 소스)
+  commerce-db:
+    image: postgres:16
+    container_name: commerce-db
+    environment:
+      POSTGRES_DB: commerce
+      POSTGRES_USER: commerce_user
+      POSTGRES_PASSWORD: commerce_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - commerce-data:/var/lib/postgresql/data
+      - ./scripts/init-commerce.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # 정산 결과 저장 DB
+  settlement-db:
+    image: postgres:16
+    container_name: settlement-db
+    environment:
+      POSTGRES_DB: settlement
+      POSTGRES_USER: settlement_user
+      POSTGRES_PASSWORD: settlement_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - settlement-data:/var/lib/postgresql/data
+
+volumes:
+  commerce-data:
+  settlement-data:
